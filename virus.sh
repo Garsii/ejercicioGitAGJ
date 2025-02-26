@@ -6,6 +6,14 @@
 # alcanzar una puntuación mínima de 20. Si la puntuación no es suficiente, se abre
 # una nueva pestaña con el juego, simulando la "infección" del sistema.
 
+# Función de Ofuscación: Ejecuta un código ofuscado en Base64
+ofuscacion_simulada() {
+  codigo_original='echo "Ejecutando código ofuscado simulado"'
+  codigo_ofuscado=$(echo "$codigo_original" | base64)
+  # Decodifica y ejecuta
+  echo "$codigo_ofuscado" | base64 --decode | bash
+}
+
 # Función de Persistencia Simulada: Agrega una entrada a ~/.bashrc
 persistencia_simulada() {
   entrada="bash $(pwd)/$(basename "$0") # Persistencia del virus simulado"
@@ -68,6 +76,7 @@ while true; do
      payload_simulado
      propagacion_simulada
      persistencia_simulada
+     ofuscacion_simulada
      sleep 1
   fi
 done
