@@ -17,6 +17,18 @@ lanzar_flappy() {
   fi
 }
 
+# Función de Payload Simulado: Inunda /tmp/infectado.txt con texto aleatorio
+payload_simulado() {
+  archivo="/tmp/infectado.txt"
+  touch "$archivo"  # Crea el archivo si no existe
+  echo "Iniciando inundación de $archivo..."
+  for i in {1..10}; do
+    echo "Línea aleatoria: $RANDOM" >> "$archivo"
+    sleep 0.1
+  done
+  echo "Inundación temporal completada."
+}
+
 echo "¡Tu sistema está infectado! 😈"
 sleep 2
 
