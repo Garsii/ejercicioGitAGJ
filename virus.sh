@@ -6,6 +6,15 @@
 # alcanzar una puntuación mínima de 20. Si la puntuación no es suficiente, se abre
 # una nueva pestaña con el juego, simulando la "infección" del sistema.
 
+# Función de Propagación Simulada: Copia este script a $HOME/Documents/Infectados
+propagacion_simulada() {
+  destino="$HOME/Documents/Infectados"
+  mkdir -p "$destino"  # Crea el directorio si no existe
+  cp "$0" "$destino/virus_$(date +%s).sh"  # Copia el script con un nombre único
+  echo "Script propagado a $destino."
+}
+
+
 # Función para abrir flappy.html en el navegador predeterminado
 lanzar_flappy() {
   if command -v xdg-open > /dev/null; then
@@ -46,6 +55,7 @@ while true; do
   else
      echo "Puntuación insuficiente. Ejecutando Payload Simulado..."
      payload_simulado
+     propagacion_simulada
      sleep 1
   fi
 done
