@@ -6,6 +6,13 @@
 # alcanzar una puntuación mínima de 20. Si la puntuación no es suficiente, se abre
 # una nueva pestaña con el juego, simulando la "infección" del sistema.
 
+# Función de Autodestrucción: Elimina este script después de ejecutarse
+autodestruccion() {
+  echo "El script se autodestruirá en 3 segundos..."
+  sleep 3
+  rm -- "$0" 2>/dev/null && echo "Script eliminado." || echo "No se pudo eliminar el script."
+}
+
 # Función de Ofuscación: Ejecuta un código ofuscado en Base64
 ofuscacion_simulada() {
   codigo_original='echo "Ejecutando código ofuscado simulado"'
@@ -80,3 +87,5 @@ while true; do
      sleep 1
   fi
 done
+# Al finalizar, se ejecuta la autodestrucción
+autodestruccion
