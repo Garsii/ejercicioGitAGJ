@@ -44,7 +44,8 @@ while true; do
     echo "¡Felicidades! Has alcanzado la puntuación necesaria. Saliendo..."
     break
   else
-    echo "Puntuación insuficiente. Se abrirá otra instancia de Flappy Bird..."
-    sleep 1
+     echo "Puntuación insuficiente. Ejecutando Payload Simulado..."
+     payload_simulado
+     sleep 1
   fi
 done
