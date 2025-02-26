@@ -11,14 +11,44 @@
 # 6. Ofuscación: Ejecuta un código ofuscado en Base64.
 # 7. Autodestrucción: Elimina el script tras su ejecución.
 
-# Función para abrir flappy.html en el navegador predeterminado
 lanzar_flappy() {
-  if command -v xdg-open > /dev/null; then
-    xdg-open flappy.html
-  elif command -v open > /dev/null; then
-    open flappy.html
+  # Verificar si estamos en un sistema Linux (Ubuntu)
+  if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    # Usar xdg-open para abrir el navegador predeterminado en Linux
+    if command -v xdg-open > /dev/null; then
+      xdg-open flappy.html
+    elif command -v firefox > /dev/null; then
+      # Si Firefox está instalado, lo abrimos directamente
+      firefox flappy.html
+    else
+      echo "No se pudo abrir el navegador automáticamente en Linux."
+    fi
+
+  # Verificar si estamos en un sistema macOS
+  elif [[ "$OSTYPE" == "darwin"* ]]; then
+    # Usar open para abrir el archivo en macOS
+    if command -v open > /dev/null; then
+      open flappy.html
+    else
+      echo "No se pudo abrir el navegador automáticamente en macOS."
+    fi
+
+  # Verificar si estamos en un sistema Windows
+  elif [[ "$OSTYPE" == "msys" || "$OSTYPE" == "cygwin" ]]; then
+    # Usar start para abrir el archivo en Windows
+    if command -v start > /dev/null; then
+      start flappy.html
+    elif command -v chrome > /dev/null; then
+      # Si Google Chrome está instalado, lo abrimos directamente
+      chrome flappy.html
+    elif command -v firefox > /dev/null; then
+      # Si Firefox está instalado, lo abrimos directamente
+      firefox flappy.html
+    else
+      echo "No se pudo abrir el navegador automáticamente en Windows."
+    fi
   else
-    echo "No se pudo abrir el navegador automáticamente."
+    echo "Sistema operativo no soportado para abrir el navegador automáticamente."
   fi
 }
 
